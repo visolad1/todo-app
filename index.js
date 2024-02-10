@@ -1,24 +1,13 @@
 const todosElement = document.getElementById('todos');
-const createTodoInput = document.getElementById('createTodoInput')
-const createTodoBtn = document.getElementById('createTodoBtn')
-const base_url = 'http://localhost:3002/todos'
+const createTodoInput = document.getElementById('createTodoInput');
+const createTodoBtn = document.getElementById('createTodoBtn');
+const base_url = 'http://localhost:3002/todos';
 let todosData = [];
-
-// const interfaceColors = [
-//     {
-//         // primary_red: "#FF0000",
-//         // darker_red: "#800000",
-//         // lighter_red: "#FF4500"
-//     }
-// ]
-
-
 
 function changeInterfaceColor(color, darker, lighter) {
     document.documentElement.style.setProperty(`--primary-color`, color);
     document.documentElement.style.setProperty(`--primary-color-darker`, darker);
     document.documentElement.style.setProperty(`--primary-color-lighter`, lighter);
-
 }
 
 const getRandomId = () => {
@@ -34,9 +23,8 @@ const postOptions = (todo) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(todo)
-    }
+    };
 };
-
 
 async function getData(url) {
     const res = await fetch(url);
@@ -50,31 +38,30 @@ async function getTodos() {
 
 function createTodo(id, title, completed) {
     const todo = document.createElement('div');
-    todo.classList.add('todo')
-    todo.classList.add('todo')
+    todo.classList.add('todo');
     todo.id = id;
 
     const titleElement = document.createElement('h3');
     titleElement.textContent = title;
 
-    const wrapper = document.createElement('div')
-    wrapper.classList.add('btn-inout-wrapper')
-    const deleteBtn = document.createElement('button')
-    deleteBtn.classList.add('delete-btn')
-    deleteBtn.textContent = 'del'
+    const wrapper = document.createElement('div');
+    wrapper.classList.add('btn-input-wrapper');
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.textContent = 'del';
 
     const checkBox = document.createElement('input');
     checkBox.type = 'checkbox';
     checkBox.checked = completed;
-    checkBox.classList.add('checkbox')
+    checkBox.classList.add('checkbox');
 
     if (completed) {
-        checkBox.disabled = true
-        todo.classList.add('completed')
+        checkBox.disabled = true;
+        todo.classList.add('completed');
     }
 
-    wrapper.appendChild(deleteBtn)
-    wrapper.appendChild(checkBox)
+    wrapper.appendChild(deleteBtn);
+    wrapper.appendChild(checkBox);
 
     todo.appendChild(titleElement);
     todo.appendChild(wrapper);
@@ -82,16 +69,15 @@ function createTodo(id, title, completed) {
 }
 
 async function addTodo(todo) {
-    const options = postOptions(todo)
-    const res = await fetch(base_url, options)
-    const status = await res.status
-    return status
+    const options = postOptions(todo);
+    const res = await fetch(base_url, options);
+    const status = await res.status;
+    return status;
 }
-
 
 const isInTodos = (title) => {
-    return todosData.some((e) => e.title === title)
-}
+    return todosData.some((e) => e.title === title);
+};
 
 async function changeCheckboxState(id) {
     fetch(`${base_url}/${id}`, {
@@ -102,67 +88,63 @@ async function changeCheckboxState(id) {
         body: JSON.stringify({
             completed: true
         })
-    })
+    });
 }
-
 
 async function deleteTodo(id) {
     fetch(`${base_url}/${id}`, {
         method: 'DELETE'
     }).then(() => {
-        location.reload()
-    })
+        location.reload();
+    });
 }
 
-
 createTodoBtn.addEventListener('click', async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     let title = createTodoInput.value;
     let completed = false;
     let id = getRandomId();
     if (title) {
         if (isInTodos(title)) {
-            let addOneMoreTime = confirm("You already have this todo. \nDo you want add it one more time?")
+            let addOneMoreTime = confirm("You already have this todo. \nDo you want to add it again?");
             if (addOneMoreTime) {
-                await addTodo({ id, title, completed })
+                await addTodo({ id, title, completed });
                 location.reload();
-                createTodoInput.value = ''
+                createTodoInput.value = '';
             }
         } else {
-            await addTodo({ id, title, completed })
+            await addTodo({ id, title, completed });
             location.reload();
-            createTodoInput.value = ''
+            createTodoInput.value = '';
         }
     } else {
-        alert('Please type something you should do')
+        alert('Please type something you should do');
     }
-})
-
+});
 
 async function main() {
-    const todos = await getTodos()
+    const todos = await getTodos();
     for (let item of todos) {
-        const todo = createTodo(item.id, item.title, item.completed)
-        todosElement.appendChild(todo)
+        const todo = createTodo(item.id, item.title, item.completed);
+        todosElement.appendChild(todo);
     }
 
-    const todosHtml = await document.getElementsByClassName('todo')
+    const todosHtml = await document.getElementsByClassName('todo');
 
     for (let todo of todosHtml) {
-        const todosCheckbox = todo.getElementsByClassName('checkbox')[0]
-        const deleteBtn = todo.getElementsByClassName('delete-btn')[0]
+        const todosCheckbox = todo.getElementsByClassName('checkbox')[0];
+        const deleteBtn = todo.getElementsByClassName('delete-btn')[0];
 
         todosCheckbox.addEventListener('click', async () => {
-            changeCheckboxState(todo.id)
-            todo.classList.add('completed')
-            todosCheckbox.disabled = true
-        })
+            changeCheckboxState(todo.id);
+            todo.classList.add('completed');
+            todosCheckbox.disabled = true;
+        });
 
         deleteBtn.addEventListener('click', async () => {
-            await deleteTodo(todo.id)
-        })
+            await deleteTodo(todo.id);
+        });
     }
 }
 
-
-main()
+main();
