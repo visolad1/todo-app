@@ -115,7 +115,7 @@ body {
     text-decoration: line-through;
 }
 
-.btn-inout-wrapper {
+.btn-input-wrapper {
     display: flex;
     align-items: center;
     gap: 10px;
